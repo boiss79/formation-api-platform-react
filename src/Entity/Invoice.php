@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use App\Entity\User;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +11,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use DateTimeZone;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -48,6 +50,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * )
  * 
  * @ApiFilter(OrderFilter::class, properties={"amount":"asc","sentAt","customer.id":"asc"})
+ * @ORM\HasLifecycleCallbacks()
  */
 class Invoice
 {
@@ -71,7 +74,6 @@ class Invoice
      * @ORM\Column(type="datetime")
      * @Groups({"invoices_read","customers_read","invoices_subresource"})
      * @Assert\Type("\DateTimeInterface", message="La date doit être au format : YYYY-MM-DD")
-     * @Assert\NotBlank(message="La date d'envoie doit être renseignée")
      */
     private $sentAt;
 
@@ -100,6 +102,17 @@ class Invoice
     private $chrono;
 
 
+    /**
+     * @ORM\PrePersist
+     *
+     * @return void
+     */
+    public function setEmptyDate(){
+        if(empty($sentAt)){
+            $this->setSentAt(new \DateTime());
+        }
+    }
+    
     /**
      * Permet de récupérer l'utilisateur relié à une facture sans passer par le customer
      * @Groups({"invoices_read","invoices_subresource"})
