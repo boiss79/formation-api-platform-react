@@ -1,6 +1,7 @@
 import React, {useState, useContext} from 'react';
 import AuthAPI from '../services/authAPI';
 import AuthContext from '../contexts/AuthContext';
+import Field from '../components/forms/Field';
 
 
 const LoginPage = ({history}) => {
@@ -41,30 +42,23 @@ const LoginPage = ({history}) => {
 
             <p className={`my-3 text-danger ${errorLogin}`}>Les informations de connexion sont invalides !</p>
             <form onSubmit={handleSubmit} >
-                <div className="form-group">
-                    <label htmlFor="username">Adresse Email</label>
-                    <input 
-                        type="email" 
-                        placeholder="Adresse email de connexion" 
-                        name="username" 
-                        id="username" 
-                        className="form-control"
-                        value={credentials.username}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Mot de passe</label>
-                    <input 
-                        type="password" 
-                        placeholder="Mot de passe" 
-                        name="password" 
-                        id="password" 
-                        className="form-control"
-                        value={credentials.password}
-                        onChange={handleChange}
-                    />
-                </div>
+                <Field 
+                    name="username" 
+                    label="Adresse Email" 
+                    value={credentials.username} 
+                    onChange={handleChange} 
+                    placeholder="Adresse email de connexion" 
+                    type="email" 
+                />
+                
+                <Field 
+                    name="password" 
+                    label="Mot de passe" 
+                    value={credentials.password} 
+                    onChange={handleChange} 
+                    type="password" 
+                />
+                
                 <div className="form-group">
                     <button type="submit" className="btn btn-primary">Connexion</button>
                 </div>
