@@ -2,15 +2,17 @@ import React, {useContext} from "react";
 import AuthAPI from '../services/authAPI';
 import { NavLink } from 'react-router-dom';
 import AuthContext from '../contexts/AuthContext';
+import { toast } from "react-toastify";
 
 const Navbar = ({history}) => {
     
-    const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext)
+    const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
 
     const handleLogout = () => {
         AuthAPI.logout();
         setIsAuthenticated(false);
-        history.push("/login")
+        toast.info("Vous êtes desormais déconnecté 😃");
+        history.push("/login");
     }
     
     return ( 

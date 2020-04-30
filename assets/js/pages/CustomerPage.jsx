@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Field from '../components/forms/Field';
 import { Link } from 'react-router-dom';
 import CustomersAPI from '../services/customersAPI';
+import { toast } from "react-toastify";
 
 const CustomerPage = ({history, match}) => {
 
@@ -12,14 +13,14 @@ const CustomerPage = ({history, match}) => {
         firstName: "",
         email:"",
         company:""
-    })
+    });
 
     const [errors, setErrors] = useState({
         lastName: "",
         firstName: "",
         email:"",
         company:""
-    })
+    });
 
     const [editing, setEditing] = useState(false);
 
@@ -27,10 +28,11 @@ const CustomerPage = ({history, match}) => {
     const fetchCustomer = async (id) => {
         try{
             const {lastName, firstName, email, company} = await CustomersAPI.find(id); 
-            setCustomer({firstName, lastName, company, email})
+            setCustomer({firstName, lastName, company, email});
         } catch(error) {
+            toast.error("Erreur lors du chargement du client ❌");
         }
-    }
+    };
 
     // Chargement du customer si un identifiant (valide) est passé dans l'url  à chaque changement d'identifiant
     useEffect(() => {
@@ -38,15 +40,15 @@ const CustomerPage = ({history, match}) => {
             setEditing(true);
             fetchCustomer(id)
         } 
-    }, [id])
+    }, [id]);
 
 
     // Gestion des changements des input dans le formulaire
     const handleChange = ({currentTarget}) => {
         const{name, value} = currentTarget;
         
-        setCustomer({...customer, [name]:value})
-    }
+        setCustomer({...customer, [name]:value});
+    };
 
     // Gestion de la soumission du formulaire
     const handleSubmit = async (event) => {
@@ -54,10 +56,12 @@ const CustomerPage = ({history, match}) => {
 
         try{
             if(editing){
-                await CustomersAPI.update(id, customer)
+                await CustomersAPI.update(id, customer);
+                toast.success("Le client a bien été modifié ✅");
             } else {
-                await CustomersAPI.create(customer)
-                history.replace("/customers")
+                await CustomersAPI.create(customer);
+                toast.success("Le client a bien été crée ✅");
+                history.replace("/customers");
             }          
             setErrors({});
         } catch({response}) {
@@ -66,9 +70,10 @@ const CustomerPage = ({history, match}) => {
                 const apiErrors = {};
                 violations.forEach(({propertyPath, message}) => {
                     apiErrors[propertyPath] = message;
-                })
+                });
 
                 setErrors(apiErrors);
+                toast.error("Des erreurs dans le formulaire ❌");
             }
         }
     }

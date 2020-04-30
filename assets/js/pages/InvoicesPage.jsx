@@ -4,6 +4,8 @@ import Pagination from '../components/Pagination';
 import InvoicesAPI from "../services/invoicesAPI"
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import { toast } from "react-toastify";
+import TableLoader from '../components/loaders/TableLoader';
 
 const STATUS_CLASSES = {
     PAID: 'success',
@@ -22,6 +24,7 @@ const InvoicesPage = (props) => {
     const [invoices, setInvoices] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const itemsPerPage = 10;
     
@@ -29,11 +32,12 @@ const InvoicesPage = (props) => {
     const fetchInvoices = async () => {
 
         try{
-            const data = await InvoicesAPI.findAll()
-            
-            setInvoices(data)
+            const data = await InvoicesAPI.findAll();
+            setInvoices(data);
+            setLoading(false);
         } catch(error) {
             console.log(error.response);
+            toast.error("Erreur lors du chargement des factures ❌");
         }
     }
 
@@ -62,9 +66,12 @@ const InvoicesPage = (props) => {
 
         try{
             await InvoicesAPI.remove(id)
+            toast.success("La facture a bien été supprimée ✅");
+            
         } catch(error) {
             console.log(error.response);
             setInvoices(originalInvoices);
+            toast.error("Une erreur est survenue ❌");
         }
     }
 
@@ -112,13 +119,16 @@ const InvoicesPage = (props) => {
                         <th></th>
                     </tr>
                 </thead>
-                <tbody>
+
+                {!loading && <tbody>
                     {paginatedInvoices.map(invoice => 
                         <tr key={invoice.id}>
                             <td>{invoice.chrono}</td>
                             <td>
-                                <a href="" className="badge badge-primary">{invoice.customer.lastName} {invoice.customer.firstName}</a>
-                            </td>
+                                <Link to={"/customer/"+invoice.customer.id} className="text-white">
+                                        <span className="badge badge-primary">{invoice.customer.firstName} {invoice.customer.lastName}</span>
+                                </Link>
+                            </td> 
                             <td className="text-center">{formatDate(invoice.sentAt)}</td>
                             <td className={"text-center text-" + STATUS_CLASSES[invoice.status]}>{STATUS_LABELS[invoice.status]}</td>
                             <td className="text-center">{invoice.amount.toLocaleString()} €</td>
@@ -129,7 +139,9 @@ const InvoicesPage = (props) => {
                         </tr>                        
                     )}
                 </tbody>
+                }
             </table>
+            {loading && <TableLoader />}
 
             <Pagination
                 currentPage={currentPage} 

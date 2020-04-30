@@ -3,6 +3,7 @@ import Field from '../components/forms/Field';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import UsersAPI from '../services/usersAPI';
+import { toast } from "react-toastify";
 
 const Register = ({history}) => {
     
@@ -37,6 +38,7 @@ const Register = ({history}) => {
         if(user.password !== user.passwordConfirm){
             apiErrors.passwordConfirm = "Le mot de passe n'est pas identique à celui renseigné plus haut."
             setErrors(apiErrors);
+            toast.error("Une erreur est survenue, veuillez vérifier les informations indiquées ❌");
 
             return
         }
@@ -45,6 +47,7 @@ const Register = ({history}) => {
             const data = await UsersAPI.createUser(user);
             
             setErrors({})
+            toast.success("Votre compte vient d'étre crée ! Vous pouvez maintenant vous connecter 🔥");
             history.replace("/login");
         } catch(error){
             const {violations} = error.response.data;
@@ -54,6 +57,7 @@ const Register = ({history}) => {
             }
 
             setErrors(apiErrors);
+            toast.error("Une erreur est survenue, veuillez vérifier les informations indiquées ❌");
         }
     }
     

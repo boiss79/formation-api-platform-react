@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import Pagination from '../components/Pagination';
+import { Link } from 'react-router-dom';
 
 const CustomersPageWithPagination = props => {
 
@@ -18,11 +19,11 @@ const CustomersPageWithPagination = props => {
                 setCustomers(response.data['hydra:member']);
                 setLoading(false);
             })
-            .catch(error => console.log(error.response))
+            .catch(error => console.log(error.response));
     }, [currentPage]);
 
     const handleDelete = (id) => {
-        console.log(id)
+        console.log(id);
 
         const originalCustomers = [...customers];
 
@@ -37,13 +38,13 @@ const CustomersPageWithPagination = props => {
             .catch(error => {
                 setCustomers(originalCustomers)
                 console.log(error.response)
-            })
+            });
     };
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
         setLoading(true);
-    }
+    };
 
     const paginatedCustomers = Pagination.getData(customers, currentPage, itemsPerPage);
 
@@ -73,9 +74,9 @@ const CustomersPageWithPagination = props => {
                         <tr key={customer.id}>
                             <td>{customer.id}</td>
                             <td> 
-                                <a href="#" className="text-white">
+                                <Link to={"/customers/"+customer.id} className="text-white">
                                     <span className="badge badge-primary">{customer.firstName} {customer.lastName}</span>
-                                </a> 
+                                </Link> 
                             </td>
                             <td>{customer.email}</td>
                             <td>{customer.company}</td>
