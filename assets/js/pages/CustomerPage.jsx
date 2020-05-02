@@ -64,8 +64,9 @@ const CustomerPage = ({history, match}) => {
                 history.replace("/customers");
             }          
             setErrors({});
-        } catch({response}) {
-            const {violations} = response.data;
+        } catch(error) {
+            console.log(error)
+            const {violations} = error.response.data;
             if (violations){
                 const apiErrors = {};
                 violations.forEach(({propertyPath, message}) => {

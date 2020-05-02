@@ -147,7 +147,8 @@ const InvoicesPage = (props) => {
                 currentPage={currentPage} 
                 itemsPerPage={itemsPerPage} 
                 onPageChanged={handlePageChange} 
-                length={filteredInvoices.length} />
+                length={filteredInvoices.length} 
+            />
         </>
      );
 }
