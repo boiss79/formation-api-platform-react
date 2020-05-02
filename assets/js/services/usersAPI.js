@@ -1,7 +1,8 @@
 import Axios from 'axios';
+import { USERS_API } from './config';
 
 function createUser(user){
-    return Axios.post("http://127.0.0.1:8000/api/users", user);
+    return Axios.post(USERS_API, user);
 }
 
 export default{
